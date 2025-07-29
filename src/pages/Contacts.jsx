@@ -1,4 +1,17 @@
+import { useState, useEffect } from "react";
+import emailjs from "@emailjs/browser";
+
 export default function Contacts() {
+  // Form state
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [status, setStatus] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Contact methods data
   const contactMethods = [
     {
@@ -6,7 +19,7 @@ export default function Contacts() {
       description: "Send me a message and I'll get back to you within 24 hours",
       icon: "📧",
       value: "abhinavsinghkanwal@gmail.com",
-      link: "mailto:abhinav@example.com",
+      link: "mailto:abhinavsinghkanwal@gmail.com",
       color: "blue",
     },
     {
@@ -23,7 +36,7 @@ export default function Contacts() {
         "Explore my code repositories and contribute to open source projects",
       icon: "🔗",
       value: "github.com/abhinav",
-      link: "https://github.com/Abhinavmohindersinghv",
+      link: "https://github.com/Abhinavmohindersingh",
       color: "purple",
     },
   ];
@@ -85,6 +98,58 @@ export default function Contacts() {
     description: "Currently seeking new opportunities",
     timeline: "Immediate start available",
     location: "Brisbane, Australia (Open to remote work)",
+  };
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init("XGBQPdYVyW68c7LkL");
+  }, []);
+
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Validate email format
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatus("");
+
+    if (!validateEmail(formData.email)) {
+      setStatus("Please enter a valid email address");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const serviceID = "service_bt38qfj"; // Your Gmail Service ID
+    const templateID = "template_h1xa2nq"; // Replace with your EmailJS Template ID
+
+    emailjs
+      .send(serviceID, templateID, {
+        from_name: formData.fullName,
+        from_email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      })
+      .then(
+        () => {
+          setStatus("Message sent successfully!");
+          setFormData({ fullName: "", email: "", subject: "", message: "" });
+          setIsSubmitting(false);
+        },
+        (error) => {
+          setStatus(`Failed to send message: ${error.text}`);
+          setIsSubmitting(false);
+        }
+      );
   };
 
   return (
@@ -161,26 +226,51 @@ export default function Contacts() {
               </p>
             </div>
 
-            <div className="contact-form">
+            <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Full Name</label>
+                  <label htmlFor="fullName">Full Name</label>
                   <div className="input-wrapper">
-                    <input type="text" placeholder="Your full name" />
+                    <input
+                      type="text"
+                      id="fullName"
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      placeholder="Your full name"
+                      required
+                      aria-required="true"
+                    />
                   </div>
                 </div>
                 <div className="form-group">
-                  <label>Email Address</label>
+                  <label htmlFor="email">Email Address</label>
                   <div className="input-wrapper">
-                    <input type="email" placeholder="your.email@example.com" />
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="your.email@example.com"
+                      required
+                      aria-required="true"
+                    />
                   </div>
                 </div>
               </div>
 
               <div className="form-group">
-                <label>Subject</label>
+                <label htmlFor="subject">Subject</label>
                 <div className="select-wrapper">
-                  <select>
+                  <select
+                    id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    required
+                    aria-required="true"
+                  >
                     <option value="">Select a topic</option>
                     <option value="job-opportunity">Job Opportunity</option>
                     <option value="freelance-project">Freelance Project</option>
@@ -192,25 +282,40 @@ export default function Contacts() {
               </div>
 
               <div className="form-group">
-                <label>Message</label>
+                <label htmlFor="message">Message</label>
                 <div className="textarea-wrapper">
                   <textarea
+                    id="message"
+                    name="message"
                     rows="6"
+                    value={formData.message}
+                    onChange={handleInputChange}
                     placeholder="Tell me about your project, opportunity, or just say hello..."
+                    required
+                    aria-required="true"
                   ></textarea>
                 </div>
               </div>
 
               <button
                 className="submit-btn"
-                onClick={() => {
-                  // Form submission is non-functional due to sandbox restrictions
-                }}
+                type="submit"
+                disabled={isSubmitting}
               >
-                <span>Send Message</span>
+                <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
                 <span className="btn-arrow">✉️</span>
               </button>
-            </div>
+
+              {status && (
+                <p
+                  className={`status-message ${
+                    status.includes("Failed") ? "error" : "success"
+                  }`}
+                >
+                  {status}
+                </p>
+              )}
+            </form>
           </div>
           <hr className="section-separator" />
         </section>
@@ -245,49 +350,6 @@ export default function Contacts() {
           </div>
           <hr className="section-separator" />
         </section>
-
-        {/* FAQ Section */}
-        {/* <section className="faq-section">
-          <div className="section-header">
-            <h2>Frequently Asked Questions</h2>
-            <p>Quick answers to common questions about working with me</p>
-          </div>
-
-          <div className="faq-grid">
-            <div className="faq-item">
-              <h3>What's your typical response time?</h3>
-              <p>
-                I usually respond to emails and messages within 24 hours during
-                business days. For urgent matters, feel free to mention it in
-                your message.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3>Are you available for remote work?</h3>
-              <p>
-                Absolutely! I'm experienced in remote collaboration and have
-                worked with teams across different time zones. I'm based in
-                Brisbane, Australia (AEST).
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3>What kind of projects interest you most?</h3>
-              <p>
-                I'm particularly drawn to projects involving AI/ML, full-stack
-                development, and innovative technical challenges. I love working
-                on solutions that make a real impact.
-              </p>
-            </div>
-            <div className="faq-item">
-              <h3>Do you provide project estimates?</h3>
-              <p>
-                Yes, I'm happy to discuss project scope and provide estimates
-                for freelance work. I believe in transparent communication about
-                timelines and deliverables.
-              </p>
-            </div>
-          </div>
-        </section> */}
       </div>
 
       <style>{`
@@ -643,6 +705,11 @@ export default function Contacts() {
           box-shadow: 0 8px 15px rgba(16, 185, 129, 0.4);
         }
 
+        .submit-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
         .btn-arrow {
           font-size: 0.9rem;
           transition: transform 0.3s ease;
@@ -650,6 +717,20 @@ export default function Contacts() {
 
         .submit-btn:hover .btn-arrow {
           transform: translateX(4px);
+        }
+
+        .status-message {
+          margin-top: 1rem;
+          text-align: center;
+          font-size: 0.875rem;
+        }
+
+        .status-message.success {
+          color: #10b981;
+        }
+
+        .status-message.error {
+          color: #ef4444;
         }
 
         /* Collaboration Section */

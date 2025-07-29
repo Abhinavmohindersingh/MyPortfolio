@@ -1,5 +1,6 @@
 import React from "react";
 import image from "../images/abhina.png"; // Replace with actual path
+import { Link } from "react-router-dom";
 
 export default function Home() {
   // Categories data
@@ -79,16 +80,15 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
             <div className="cta-buttons">
-              <a href="/projects" className="btn btn-primary">
+              <Link to="/projects" className="btn btn-primary">
                 <span>View Projects</span>
                 <span className="btn-arrow">→</span>
-              </a>
-              <a href="/profile" className="btn btn-secondary">
+              </Link>
+              <Link to="/profile" className="btn btn-secondary">
                 <span>About Me</span>
                 <span className="btn-arrow">→</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

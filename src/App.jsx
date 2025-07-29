@@ -23,10 +23,10 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/projects" element={<Projects />} />
             <Route path="/contacts" element={<Contacts />} />
-            <Route path="/projects/research" element={<Research />} />
-            <Route path="/projects/embedded" element={<Embedded />} />
-            <Route path="/projects/fullstack" element={<FullStackProjects />} />
-            <Route path="/projects/aiml" element={<AIProjects />} />
+            <Route path="/projects/Research" element={<Research />} />
+            <Route path="/projects/Embedded" element={<Embedded />} />
+            <Route path="/projects/Fullstack" element={<FullStackProjects />} />
+            <Route path="/projects/Aiml" element={<AIProjects />} />
 
             {/* Add more routes as needed */}
             <Route

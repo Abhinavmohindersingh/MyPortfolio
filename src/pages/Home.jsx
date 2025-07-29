@@ -7,25 +7,25 @@ export default function Home() {
     {
       title: "Research Projects",
       desc: "Explore my work on advanced research topics and innovative solutions.",
-      link: "/projects/research",
+      link: "/projects/Research",
       icon: "🔬",
     },
     {
       title: "Embedded Projects",
       desc: "Hands-on projects in embedded systems and IoT applications.",
-      link: "/projects/embedded",
+      link: "/projects/Embedded",
       icon: "⚡",
     },
     {
       title: "Full Stack Projects",
       desc: "Web and app development projects showcasing frontend and backend skills.",
-      link: "/projects/fullstack",
+      link: "/projects/Fullstack",
       icon: "💻",
     },
     {
       title: "AI & ML Projects",
       desc: "Artificial Intelligence and Machine Learning projects demonstrating data-driven insights.",
-      link: "/projects/aiml",
+      link: "/projects/Aiml",
       icon: "🤖",
     },
   ];
@@ -81,11 +81,11 @@ export default function Home() {
             </div>
 
             <div className="cta-buttons">
-              <a href="/projects" className="btn btn-primary">
+              <a href="/Projects" className="btn btn-primary">
                 <span>View Projects</span>
                 <span className="btn-arrow">→</span>
               </a>
-              <a href="/profile" className="btn btn-secondary">
+              <a href="/Profile" className="btn btn-secondary">
                 <span>About Me</span>
                 <span className="btn-arrow">→</span>
               </a>
@@ -270,7 +270,7 @@ export default function Home() {
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            margin-top: 50px;
+            margin-top: 80px;
           }
 
           .profile-intro h2 {

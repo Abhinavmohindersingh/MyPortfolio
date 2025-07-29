@@ -270,7 +270,7 @@ export default function Home() {
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            margin-top: 80px;
+            margin-top: 180px;
           }
 
           .profile-intro h2 {

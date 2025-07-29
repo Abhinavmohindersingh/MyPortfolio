@@ -212,6 +212,7 @@ export default function Home() {
           .main-container {
             max-width: 1200px;
             margin: 0 auto;
+            margin-top: 80px;
             padding: 3rem 1.5rem;
           }
 
@@ -270,7 +271,7 @@ export default function Home() {
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            margin-top: 180px;
+            margin-top: 10px;
           }
 
           .profile-intro h2 {

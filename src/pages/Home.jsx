@@ -104,8 +104,8 @@ export default function Home() {
 
         <div className="categories-grid">
           {projectCategories.map(({ title, desc, link, icon }) => (
-            <a
-              href={link}
+            <Link
+              to={link}
               key={title}
               className="category-card"
               aria-label={`Go to ${title}`}
@@ -116,7 +116,7 @@ export default function Home() {
                 <p>{desc}</p>
               </div>
               <div className="card-arrow">→</div>
-            </a>
+            </Link>
           ))}
         </div>
         <hr className="section-separator" />

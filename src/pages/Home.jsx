@@ -82,7 +82,7 @@ export default function Home() {
             </div>
             <div className="cta-buttons">
               <Link to="/projects" className="btn btn-primary">
-                <span>View Projects</span>
+                <span>View Projeczaassaasts</span>
                 <span className="btn-arrow">→</span>
               </Link>
               <Link to="/profile" className="btn btn-secondary">

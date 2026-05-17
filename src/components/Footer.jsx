@@ -2,385 +2,118 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
 
-  const footerLinks = {
-    navigation: [
-      { name: "Home", path: "/" },
-      { name: "About", path: "/profile" },
-      { name: "Projects", path: "/projects" },
-      { name: "Contact", path: "/contacts" },
-    ],
-    social: [
-      {
-        name: "LinkedIn",
-        url: "https://linkedin.com/in/abhinav3838",
-        icon: "💼",
-      },
-      {
-        name: "GitHub",
-        url: "https://github.com/Abhinavmohindersingh",
-        icon: "🔗",
-      },
-      // { name: "Email", url: "mailto:abhinavsinghkanwal@gmail.com", icon: "📧" },
-    ],
-    skills: [
-      "React",
-      "Node.js",
-      "Python",
-      "Machine Learning",
-      "Embedded Systems",
-      "Full Stack Development",
-      "DevOps",
-      "AWS Cloud",
-    ],
-  };
+  const nav = [
+    { name: "Home", path: "/" },
+    { name: "About", path: "/profile" },
+    { name: "Projects", path: "/projects" },
+    { name: "Contact", path: "/contacts" },
+  ];
+
+  const social = [
+    {
+      name: "LinkedIn",
+      url: "https://linkedin.com/in/abhinav3838",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      ),
+    },
+    {
+      name: "GitHub",
+      url: "https://github.com/Abhinavmohindersingh",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+      ),
+    },
+    {
+      name: "Email",
+      url: "mailto:abhinavsinghkanwal@gmail.com",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      ),
+    },
+    {
+      name: "SingSingh AI",
+      url: "https://singsinghai.com.au",
+      icon: (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      ),
+    },
+  ];
 
   return (
     <footer className="footer">
       <div className="footer-container">
-        {/* Main Footer Content */}
         <div className="footer-content">
-          {/* Brand Section */}
+          {/* Brand */}
           <div className="footer-brand">
-            <div className="brand">
-              <span className="brand-text">Abhinav</span>
-              <span className="brand-subtitle">Software Engineer</span>
-            </div>
+            <Link to="/" className="brand" style={{ textDecoration: "none" }}>
+              <span className="brand-text">Abhinav Singh</span>
+              <span className="brand-subtitle">Co-founder · AI Engineer</span>
+            </Link>
             <p className="footer-description">
-              Passionate about creating innovative solutions and pushing the
-              boundaries of technology. Let's build something amazing together.
+              Co-founder at SingSingh AI.
+              BEng Honours, University of Queensland. Brisbane, Australia.
             </p>
             <div className="social-links">
-              {footerLinks.social.map((social) => (
+              {social.map((s) => (
                 <a
-                  key={social.name}
-                  href={social.url}
+                  key={s.name}
+                  href={s.url}
                   className="social-link"
-                  target={social.url.startsWith("http") ? "_blank" : "_self"}
-                  rel={
-                    social.url.startsWith("http") ? "noopener noreferrer" : ""
-                  }
-                  aria-label={social.name}
+                  target={s.url.startsWith("http") ? "_blank" : "_self"}
+                  rel={s.url.startsWith("http") ? "noopener noreferrer" : ""}
+                  aria-label={s.name}
                 >
-                  <span className="social-icon">{social.icon}</span>
-                  <span className="social-name">{social.name}</span>
+                  {s.icon}
+                  <span>{s.name}</span>
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Skills Section */}
+          {/* Navigation */}
           <div className="footer-section">
-            <h3 className="footer-title">Technologies</h3>
-            <div className="skills-grid">
-              {footerLinks.skills.map((skill) => (
-                <span key={skill} className="skill-tag">
-                  {skill}
-                </span>
+            <h3 className="footer-title">Navigation</h3>
+            <ul className="footer-links">
+              {nav.map((item) => (
+                <li key={item.name}>
+                  <Link to={item.path} className="footer-link">{item.name}</Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact */}
           <div className="footer-section">
-            <h3 className="footer-title">Get In Touch</h3>
+            <h3 className="footer-title">Contact</h3>
             <div className="contact-info">
-              <p className="contact-item">
-                <span className="contact-icon">📍</span>
-                Brisbane, QLD, Australia
-              </p>
-              <p className="contact-item">
-                <span className="contact-icon">🎓</span>
-                University of Queensland Graduate
-              </p>
-              <p className="contact-item">
-                <span className="contact-icon">💻</span>
-                Available for opportunities
-              </p>
+              <div className="contact-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: "var(--text-2)" }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Brisbane, QLD, Australia</span>
+              </div>
+              <div className="contact-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: "var(--text-2)" }}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a href="mailto:abhinavsinghkanwal@gmail.com" style={{ color: "var(--blue)", textDecoration: "none" }}>
+                  abhinavsinghkanwal@gmail.com
+                </a>
+              </div>
+              <div className="contact-item">
+                <span style={{ color: "var(--green)", fontSize: "0.6rem" }}>●</span>
+                <span style={{ color: "var(--green)", fontWeight: 500 }}>Open to opportunities</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <hr className="section-separator" />
-
-        {/* Bottom Bar */}
         <div className="footer-bottom">
-          <div className="footer-bottom-content">
-            <p className="copyright">
-              © {currentYear} Abhinav . All rights reserved.
-            </p>
-            {/* <div className="footer-bottom-links">
-              <a href="/privacy" className="footer-bottom-link">
-                Privacy Policy
-              </a>
-              <a href="/terms" className="footer-bottom-link">
-                Terms of Service
-              </a>
-            </div> */}
-          </div>
+          <p className="copyright">© {year} Abhinav Singh. All rights reserved.</p>
+          <p style={{ color: "var(--text-3)", fontSize: "0.85rem" }}>
+            Systems Architect · Full Stack Engineer · AI Builder
+          </p>
         </div>
       </div>
-
-      <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        .footer {
-          background: rgba(15, 23, 42, 0.8);
-          backdrop-filter: blur(10px);
-          color: #ffffff;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          line-height: 1.6;
-        }
-
-        .footer-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 3rem 1.5rem;
-        }
-
-        .footer-content {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 2rem;
-          margin-bottom: 2rem;
-        }
-
-        .footer-brand {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .brand {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .brand-text {
-          font-size: 1.75rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #10b981, #059669);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .brand-subtitle {
-          font-size: 0.875rem;
-          color: #94a3b8;
-          font-weight: 300;
-        }
-
-        .footer-description {
-          font-size: 1rem;
-          color: #cbd5e1;
-          line-height: 1.7;
-        }
-
-        .social-links {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .social-link {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 1rem;
-          font-weight: 600;
-          color: #cbd5e1;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-
-        .social-link:hover {
-          color: #34d399;
-          transform: translateY(-2px);
-        }
-
-        .social-icon {
-          font-size: 1.25rem;
-          filter: grayscale(100%);
-          transition: filter 0.3s ease;
-        }
-
-        .social-link:hover .social-icon {
-          filter: grayscale(0%);
-        }
-
-        .footer-section {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .footer-title {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #f8fafc;
-          background: linear-gradient(135deg, #10b981, #059669);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          margin-bottom: 0.5rem;
-        }
-
-        .skills-grid {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-        }
-
-        .skill-tag {
-          background: rgba(16, 185, 129, 0.1);
-          color: #6ee7b7;
-          padding: 0.25rem 0.75rem;
-          border-radius: 15px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          border: 1px solid rgba(16, 185, 129, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        .skill-tag:hover {
-          background: rgba(16, 185, 129, 0.2);
-          transform: translateY(-2px);
-        }
-
-        .contact-info {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .contact-item {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 1rem;
-          color: #cbd5e1;
-        }
-
-        .contact-icon {
-          font-size: 1.25rem;
-          filter: grayscale(100%);
-          transition: filter 0.3s ease;
-        }
-
-        .contact-item:hover .contact-icon {
-          filter: grayscale(0%);
-        }
-
-        .section-separator {
-          border: 0;
-          height: 1px;
-          background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.5), transparent);
-          margin: 2rem auto;
-          width: 50%;
-        }
-
-        .footer-bottom {
-          border-top: 1px solid rgba(51, 65, 85, 0.3);
-          padding-top: 1.5rem;
-        }
-
-        .footer-bottom-content {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-          gap: 1rem;
-        }
-
-        .copyright {
-          font-size: 0.875rem;
-          color: #94a3b8;
-        }
-
-        .footer-bottom-links {
-          display: flex;
-          gap: 1.5rem;
-        }
-
-        .footer-bottom-link {
-          font-size: 0.875rem;
-          font-weight: 600;
-          color: #cbd5e1;
-          text-decoration: none;
-          transition: all 0.3s ease;
-        }
-
-        .footer-bottom-link:hover {
-          color: #34d399;
-          transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-          .footer-content {
-            grid-template-columns: 1fr;
-            text-align: center;
-          }
-
-          .footer-brand {
-            align-items: center;
-          }
-
-          .social-links {
-            justify-content: center;
-          }
-
-          .brand-text {
-            font-size: 1.5rem;
-          }
-
-          .footer-title {
-            font-size: 1.25rem;
-          }
-
-          .footer-bottom-content {
-            flex-direction: column;
-            text-align: center;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .footer-container {
-            padding: 2rem 1rem;
-          }
-
-          .brand-text {
-            font-size: 1.25rem;
-          }
-
-          .brand-subtitle {
-            font-size: 0.75rem;
-          }
-
-          .footer-description {
-            font-size: 0.875rem;
-          }
-
-          .footer-title {
-            font-size: 1.125rem;
-          }
-
-          .social-link,
-          .contact-item {
-            font-size: 0.875rem;
-          }
-
-          .social-icon,
-          .contact-icon {
-            font-size: 1rem;
-          }
-        }
-      `}</style>
     </footer>
   );
 };

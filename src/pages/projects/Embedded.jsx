@@ -1,791 +1,185 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import fpgaProcessorImage from "../../images/fpga.png";
-import bridgeMonitoringImage from "../../images/bridge.png";
-import indoorLocalizationImage from "../../images/indoor.png";
-import microscopeRemoteImage from "../../images/microscope.png";
+import { motion } from "framer-motion";
+import ImageLightbox from "../../components/ImageLightbox";
+import fpgaImage from "../../images/fpga.png";
+import bridgeImage from "../../images/bridge.png";
+import indoorImage from "../../images/indoor.png";
+import microscopeImage from "../../images/microscope.png";
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] },
+});
+
+const projects = [
+  {
+    title: "Remote-Controlled Microscope – Serial Interfacing",
+    description:
+      "Built a wireless control interface for a laboratory microscope using STM32 and RF communication. Low-latency UART-based control with precise positioning — designed for real lab environments, not demos.",
+    image: microscopeImage,
+    tags: ["STM32", "UART", "RF Communication", "Bare Metal C"],
+    link: "https://github.com/Abhinavmohindersingh/RemoteControlledMicroscope",
+    year: "Feb – Jun 2024",
+    badge: "Individual",
+  },
+  {
+    title: "FPGA-Based Application-Specific Instruction Processor",
+    description:
+      "Designed and implemented a custom ASIP on Nexys 4 DDR using VHDL — full datapath, control unit, keyboard interface, and display system. Built from the ground up to handle specialised arithmetic operations at high throughput.",
+    image: fpgaImage,
+    tags: ["FPGA", "VHDL", "Nexys4 DDR", "Digital Logic", "Datapath Design"],
+    link: "#",
+    year: "Aug – Nov 2024",
+    badge: "Individual",
+  },
+  {
+    title: "Intelligent Bridge Suspension Monitoring",
+    description:
+      "Wireless sensor network combining accelerometers and ultrasonic sensors for real-time structural health monitoring. STM32 DISC + ESP32 + M5Stack Core 2 communicating over GATT BLE with JSON serialisation — built to detect structural anomalies before they become problems.",
+    image: bridgeImage,
+    tags: ["STM32", "ESP32", "BLE GATT", "Sensor Fusion", "Ultrasound", "JSON"],
+    link: "https://github.com/Abhinavmohindersingh/Atlas-Grey",
+    year: "Feb – Jun 2025",
+    badge: "Team",
+  },
+  {
+    title: "Indoor Localization with Sensor Fusion",
+    description:
+      "Real-time object tracking across a 4×3m grid using RSSI + ultrasonic ranging fused through a Kalman filter. Zephyr RTOS enabled multi-threaded firmware with interrupt-driven sensor handling — achieving sub-metre accuracy.",
+    image: indoorImage,
+    tags: ["Zephyr RTOS", "nRF52840", "BLE", "Kalman Filter", "Ultrasound", "Multithreading"],
+    link: "https://github.com/aniketgupta17/PRAC3-CSSE4011/tree/main",
+    year: "Feb – Jun 2025",
+    badge: "Team",
+  },
+];
 
 export default function EmbeddedProjects() {
-  const embeddedProjects = [
-    {
-      title: "Remote-Controlled Microscope – Serial Interfacing",
-      category: "Embedded Systems",
-      description:
-        "Wireless microscope control system using STM32 and RF modules.",
-      longDescription:
-        "Built a remote-control interface for a microscope using serial communication protocols, microcontroller logic, and RF modules for wireless transmission. The system enables precise remote operation with low-latency control for laboratory environments.",
-      icon: "🔬",
-      status: "Individual Project",
-      year: "Feb - June 2024",
-      image: microscopeRemoteImage,
-      technologies: [
-        "STM32",
-        "RF Communication",
-        "UART",
-        "Bare metal C programming",
-      ],
-      links: [
-        {
-          type: "report",
-          label: "Project Repo",
-          url: "https://github.com/Abhinavmohindersingh/RemoteControlledMicroscope",
-          icon: "📊",
-        },
-      ],
-    },
-    {
-      title: "FPGA-Based Application-Specific Instruction Processor",
-      category: "Digital Design",
-      description:
-        "Designed custom arithmetic units and datapath/controller using FPGA.",
-      longDescription:
-        "On Nexys 4 DDR, implemented high-throughput arithmetic operations using VHDL. Built a full datapath and control architecture with keyboard interface and display system, optimizing for custom instruction processing and computational efficiency.",
-      icon: "🧠",
-      status: "Individual Project",
-      year: "Aug - Nov 2024",
-      image: fpgaProcessorImage,
-      technologies: ["FPGA", "VHDL", "Nexys4 DDR", "Digital Logic"],
-      links: [
-        {
-          type: "documentation",
-          label: "Project Repo",
-          url: "#",
-          icon: "📄",
-        },
-      ],
-    },
-    {
-      title: "Intelligent Bridge Suspension Monitoring",
-      category: "IoT & Sensor Networks",
-      description:
-        "Wireless sensor system using STM32 DISC board for real-time data.",
-      longDescription:
-        "Built a wireless sensor network using accelerometers and ultrasonic sensors. Real-time monitoring and data logging enabled via DISC STM32, ESP32 & M5Stack Core 2 as actuator with JSON serialization, and GATT BLE protocol for comprehensive structural health monitoring.",
-      icon: "🌉",
-      status: "Team Project",
-      year: "Feb - June 2025",
-      image: bridgeMonitoringImage,
-      technologies: ["STM32", "BLE", "Sensor Fusion", "Ultrasound", "JSON"],
-      links: [
-        {
-          type: "demo",
-          label: "Project Repo",
-          url: "https://github.com/Abhinavmohindersingh/Atlas-Grey",
-          icon: "🎥",
-        },
-      ],
-    },
-    {
-      title: "Indoor Localization with Sensor Fusion",
-      category: "Real-Time Systems",
-      description:
-        "Achieved real-time object tracking over a 4x3m grid using BLE + ultrasound.",
-      longDescription:
-        "Developed a real-time localization system combining RSSI and ultrasonic ranging sensors using a Kalman filter for high precision. Zephyr RTOS enabled multithreaded firmware with interrupt handling for sub-meter accuracy tracking.",
-      icon: "📍",
-      status: "Team project",
-      year: "Feb - June 2025",
-      image: indoorLocalizationImage,
-      technologies: ["Zephyr RTOS", "BLE", "Ultrasound", "Kalman Filter"],
-      links: [
-        {
-          type: "thesis",
-          label: "Project Repo",
-          url: "https://github.com/aniketgupta17/PRAC3-CSSE4011/tree/main",
-          icon: "📄",
-        },
-      ],
-    },
-  ];
-
+  const [lightbox, setLightbox] = useState(null);
   return (
     <>
-      {/* Hero Section */}
-      <section className="embedded-hero">
-        <div className="hero-background">
-          <div className="hero-overlay" />
-        </div>
-        <div className="hero-content">
-          <div className="breadcrumb">
-            <Link to="/projects" className="breadcrumb-link">
-              Projects
-            </Link>
-            <span className="breadcrumb-separator">→</span>
-            <span className="breadcrumb-current">Embedded Systems</span>
+      {lightbox && <ImageLightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />}
+      <section style={s.hero}>
+        <div style={s.heroBg} />
+        <div style={s.heroContent}>
+          <div style={s.breadcrumb}>
+            <Link to="/projects" style={s.breadcrumbLink}>Projects</Link>
+            <span style={s.sep}>→</span>
+            <span style={s.breadcrumbCurrent}>Embedded Systems</span>
           </div>
-          <h1 className="hero-title">Embedded Systems Projects</h1>
+          <motion.h1 {...fadeUp(0.1)} style={s.heroTitle}>Embedded Systems</motion.h1>
+          <motion.p {...fadeUp(0.2)} style={s.heroSub}>
+            Firmware, digital design, and wireless systems — from bare metal to RTOS.
+          </motion.p>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="embedded-container">
-        {/* Introduction Section */}
-        <section className="intro-section">
-          <div className="intro-content">
-            <p>
-              My embedded systems portfolio showcases comprehensive hardware and
-              firmware development, integrating microcontrollers, FPGA design,
-              wireless communication, and real-time processing. Each project
-              demonstrates hands-on engineering skills and innovative solutions
-              to complex technical challenges.
-            </p>
-            <p>
-              From wireless control systems to intelligent sensor networks,
-              these projects highlight the intersection of low-level
-              programming, digital design, and practical problem-solving in
-              embedded engineering applications.
-            </p>
-          </div>
-          <hr className="section-separator" />
-        </section>
-
-        {/* Embedded Projects Section */}
-        <section className="projects-section">
-          <div className="section-header">
-            <h2>Featured Systems</h2>
-            <p>
-              Hardware and firmware solutions with detailed technical
-              implementation
-            </p>
-          </div>
-
-          <div className="projects-grid">
-            {embeddedProjects.map((project, index) => (
-              <div
-                key={project.title}
-                className={`project-card embedded-card-${index + 1}`}
-              >
-                <div className="card-header">
-                  <div className="card-icon-wrapper">
-                    <span className="card-icon">{project.icon}</span>
-                  </div>
-                  <div className="card-meta">
-                    <span className="project-category">{project.category}</span>
-                    <span className="project-year">{project.year}</span>
-                    <span className="project-status">{project.status}</span>
-                  </div>
-                </div>
-
-                {project.image && (
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="project-image"
-                  />
-                )}
-
-                <div className="card-content">
-                  <h3>{project.title}</h3>
-                  <p className="card-description">{project.description}</p>
-                  <p className="card-long-description">
-                    {project.longDescription}
-                  </p>
-                  {project.technologies && (
-                    <div className="card-technologies">
-                      <h4>Technologies</h4>
-                      <ul>
-                        {project.technologies.map((tech, idx) => (
-                          <li key={idx}>{tech}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
-                <div className="card-footer">
-                  <div className="card-links">
-                    {project.links.map((link, idx) => (
-                      <a
-                        key={idx}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="embedded-link"
-                      >
-                        <span className="link-icon">{link.icon}</span>
-                        <span>{link.label}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
+      <div style={s.container}>
+        <div style={s.grid}>
+          {projects.map((p, i) => (
+            <motion.div key={p.title} className="glass-card" {...fadeUp(i * 0.1)} style={s.card}>
+              <div style={s.imgWrap} onClick={() => setLightbox({ src: p.image, alt: p.title })}>
+                <img src={p.image} alt={p.title} style={s.img} />
               </div>
-            ))}
-          </div>
-          <hr className="section-separator" />
-        </section>
-
-        {/* Embedded Focus Areas */}
-        <section className="focus-section">
-          <div className="section-header">
-            <h2>Engineering Focus Areas</h2>
-            <p>Core domains of embedded systems development and expertise</p>
-          </div>
-
-          <div className="focus-grid">
-            <div className="focus-item">
-              <div className="focus-icon">🔧</div>
-              <h3>Microcontroller Systems</h3>
-              <p>
-                Developing embedded firmware for STM32 and other microcontroller
-                platforms, implementing serial communication, sensor interfaces,
-                and real-time control systems.
-              </p>
-            </div>
-            <div className="focus-item">
-              <div className="focus-icon">📡</div>
-              <h3>Wireless Communication</h3>
-              <p>
-                Building wireless sensor networks and communication systems
-                using BLE, RF modules, and IoT protocols for remote monitoring
-                and control applications.
-              </p>
-            </div>
-            <div className="focus-item">
-              <div className="focus-icon">⚡</div>
-              <h3>Digital Design</h3>
-              <p>
-                Creating custom digital logic solutions using FPGA and VHDL,
-                implementing application-specific processors and
-                high-performance computing architectures.
-              </p>
-            </div>
-          </div>
-        </section>
+              <div style={s.cardBody}>
+                <div style={s.cardTop}>
+                  <span style={s.badge}>{p.badge}</span>
+                  <span style={s.year}>{p.year}</span>
+                </div>
+                <h3 style={s.cardTitle}>{p.title}</h3>
+                <p style={s.cardDesc}>{p.description}</p>
+                <div style={s.tags}>
+                  {p.tags.map((t) => <span key={t} style={s.tag}>{t}</span>)}
+                </div>
+                {p.link !== "#" && (
+                  <a href={p.link} target="_blank" rel="noopener noreferrer" style={s.btn}>
+                    View Project
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  </a>
+                )}
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
-
-      <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-        
-
-        body {
-          background: #0a0a0a;
-          color: #ffffff;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          line-height: 1.6;
-        }
-
-        a {
-          color: #10b981;
-          text-decoration: none;
-        }
-
-        a:hover {
-          color: #34d399;
-        }
-
-        /* Hero Section */
-        .embedded-hero {
-          position:  relative;
-          min-height: 30vh;
-          margin-top: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-        }
-
-        .hero-background {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%);
-        }
-
-        .hero-background::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                      radial-gradient(circle at 70% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
-        }
-
-        .hero-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-content {
-          position: relative;
-          z-index: 2;
-          text-align: center;
-          max-width: 1000px;
-          padding: 0 2rem;
-        }
-
-        .breadcrumb {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.5rem;
-          margin-bottom: 1.5rem;
-          font-size: 0.875rem;
-        }
-
-        .breadcrumb-link {
-          color: #10b981;
-          font-weight: 500;
-          transition: color 0.3s ease;
-        }
-
-        .breadcrumb-link:hover {
-          color: #34d399;
-        }
-
-        .breadcrumb-separator {
-          color: #64748b;
-        }
-
-        .breadcrumb-current {
-          color: #cbd5e1;
-          font-weight: 600;
-        }
-
-        .hero-title {
-          font-size: 3.5rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #10b981, #059669, #047857);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          letter-spacing: -0.02em;
-          margin-bottom: 1rem;
-        }
-
-        /* Main Container */
-        .embedded-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 3rem 1.5rem;
-        }
-
-        .section-separator {
-          border: 0;
-          height: 1px;
-          background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.5), transparent);
-          margin: 2rem auto;
-          width: 50%;
-        }
-
-        /* Section Headers */
-        .section-header {
-          text-align: center;
-          margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
-          font-size: 2.75rem;
-          font-weight: 800;
-          margin-bottom: 0.5rem;
-          background: linear-gradient(135deg, #f8fafc, #cbd5e1);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .section-header p {
-          font-size: 1rem;
-          color: #94a3b8;
-        }
-
-        /* Introduction Section */
-        .intro-section {
-          margin-bottom: 4rem;
-        }
-
-        .intro-content {
-          max-width: 700px;
-          margin: 0 auto;
-          text-align: center;
-        }
-
-        .intro-content h2 {
-          font-size: 2.5rem;
-          font-weight: 700;
-          margin-bottom: 1rem;
-          color: #f8fafc;
-        }
-
-        .intro-content p {
-          font-size: 1.125rem;
-          color: #cbd5e1;
-          margin-bottom: 0.75rem;
-          line-height: 1.6;
-        }
-
-        /* Projects Section */
-        .projects-section {
-          margin-bottom: 4rem;
-        }
-
-        .projects-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 3rem;
-        }
-
-        @media (min-width: 768px) {
-          .projects-grid {
-            grid-template-columns: 1fr 1fr;
-          }
-        }
-
-        .project-card {
-          background: rgba(15, 23, 42, 0.8);
-          border-radius: 20px;
-          border: 1px solid rgba(51, 65, 85, 0.3);
-          padding: 2rem;
-          backdrop-filter: blur(10px);
-          transition: transform 0.3s ease, border-color 0.3s ease;
-          display: flex;
-          flex-direction: column;
-          gap: 1.5rem;
-          position: relative;
-        }
-
-        .project-card:hover {
-          transform: translateY(-8px);
-          border-color: #10b981;
-          box-shadow: 0 25px 50px rgba(16, 185, 129, 0.3);
-        }
-
-        .card-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 1rem;
-        }
-
-        .card-icon-wrapper {
-          width: 70px;
-          height: 70px;
-          background: rgba(16, 185, 129, 0.1);
-          border-radius: 18px;
-          border: 1px solid rgba(16, 185, 129, 0.3);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 2.5rem;
-          filter: grayscale(100%);
-          transition: filter 0.3s ease;
-        }
-
-        .project-card:hover .card-icon-wrapper {
-          filter: grayscale(0%);
-        }
-
-        .card-meta {
-          display: flex;
-          flex-direction: column;
-          gap: 0.25rem;
-          font-size: 0.85rem;
-          text-align: right;
-          min-width: 110px;
-        }
-
-        .project-category,
-        .project-year,
-        .project-status {
-          padding: 0.25rem 0.75rem;
-          border-radius: 15px;
-          font-weight: 600;
-          border: 1px solid transparent;
-        }
-
-        .project-category {
-          color: #10b981;
-          background: rgba(16, 185, 129, 0.2);
-          border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .project-year {
-          color: #06b6d4;
-          background: rgba(6, 182, 212, 0.2);
-          border-color: rgba(6, 182, 212, 0.3);
-        }
-
-        .project-status {
-          color: #22c55e;
-          background: rgba(34, 197, 94, 0.2);
-          border-color: rgba(34, 197, 94, 0.3);
-          text-transform: uppercase;
-        }
-
-        .project-image {
-          width: 100%;
-          height: 300px;
-          border-radius: 16px;
-          object-fit: cover;
-          transition: transform 0.3s ease;
-        }
-
-        .project-card:hover .project-image {
-          transform: scale(1.02);
-        }
-
-        .card-content h3 {
-          font-size: 1.75rem;
-          font-weight: 700;
-          color: #f8fafc;
-          margin-bottom: 0.5rem;
-        }
-
-        .card-description {
-          font-weight: 600;
-          font-size: 1rem;
-          color: #6ee7b7;
-          margin-bottom: 1rem;
-        }
-
-        .card-long-description {
-          font-size: 0.95rem;
-          line-height: 1.6;
-          color: #94a3b8;
-          margin-bottom: 1rem;
-        }
-
-        .card-technologies {
-          font-size: 0.95rem;
-          line-height: 1.6;
-          color: #94a3b8;
-          margin-bottom: 1rem;
-        }
-
-        .card-technologies h4 {
-          font-size: 1.1rem;
-          font-weight: 600;
-          color: #cbd5e1;
-          margin-bottom: 0.5rem;
-        }
-
-        .card-technologies ul {
-          list-style-type: disc;
-          margin-left: 1.5rem;
-        }
-
-        .card-technologies li {
-          margin-bottom: 0.25rem;
-        }
-
-        .card-footer {
-          margin-top: auto;
-          padding-top: 1rem;
-          border-top: 1px solid rgba(51, 65, 85, 0.3);
-        }
-
-        .card-links {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-        }
-
-        .embedded-link {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-          padding: 0.3rem 0.9rem;
-          background: linear-gradient(135deg, #10b981, #059669);
-          color: white;
-          text-decoration: none;
-          border-radius: 15px;
-          font-weight: 600;
-          font-size: 0.9rem;
-          transition: all 0.3s ease;
-          border: 1px solid transparent;
-        }
-
-        .embedded-link:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .link-icon {
-          font-size: 0.9rem;
-        }
-
-        /* Focus Areas Section */
-        .focus-section {
-          margin-bottom: 4rem;
-        }
-
-        .focus-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-          gap: 2rem;
-        }
-
-        .focus-item {
-          text-align: center;
-          padding: 3rem 2rem;
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(51, 65, 85, 0.3);
-          border-radius: 20px;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-        }
-
-        .focus-item:hover {
-          transform: translateY(-6px);
-          border-color: rgba(16, 185, 129, 0.5);
-        }
-
-        .focus-icon {
-          font-size: 4rem;
-          margin-bottom: 1.5rem;
-          display: block;
-        }
-
-        .focus-item h3 {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #f8fafc;
-          margin-bottom: 1rem;
-        }
-
-        .focus-item p {
-          color: #cbd5e1;
-          line-height: 1.6;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          .hero-title {
-            font-size: 3rem;
-          }
-
-          .section-header h2 {
-            font-size: 2.25rem;
-          }
-
-          .intro-content h2 {
-            font-size: 2rem;
-          }
-
-          .intro-content p {
-            font-size: 1rem;
-          }
-
-          .projects-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .project-card {
-            padding: 1.5rem;
-          }
-
-          .card-content h3 {
-            font-size: 1.5rem;
-          }
-
-          .card-description {
-            font-size: 0.9rem;
-          }
-
-          .card-long-description,
-          .card-technologies {
-            font-size: 0.85rem;
-          }
-
-          .card-technologies h4 {
-            font-size: 1rem;
-          }
-
-          .project-image {
-            height: 250px;
-          }
-
-          .card-icon-wrapper {
-            width: 60px;
-            height: 60px;
-            font-size: 2rem;
-          }
-
-          .card-meta {
-            font-size: 0.8rem;
-            min-width: 100px;
-          }
-
-          .project-category,
-          .project-year,
-          .project-status {
-            padding: 0.2rem 0.5rem;
-          }
-
-          .embedded-link {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.85rem;
-          }
-
-          .link-icon {
-            font-size: 0.85rem;
-          }
-
-          .focus-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .focus-item {
-            padding: 2rem 1.5rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-title {
-            font-size: 2.5rem;
-          }
-
-          .embedded-container {
-            padding: 2rem 1rem;
-          }
-
-          .breadcrumb {
-            flex-direction: column;
-            gap: 0.25rem;
-          }
-
-          .section-header h2 {
-            font-size: 2rem;
-          }
-
-          .project-card {
-            padding: 1rem;
-          }
-
-          .card-content h3 {
-            font-size: 1.25rem;
-          }
-
-          .card-description {
-            font-size: 0.85rem;
-          }
-
-          .card-long-description,
-          .card-technologies {
-            font-size: 0.8rem;
-          }
-
-          .card-technologies h4 {
-            font-size: 0.9rem;
-          }
-
-          .project-image {
-            height: 200px;
-          }
-
-          .card-icon-wrapper {
-            width: 50px;
-            height: 50px;
-            font-size: 1.75rem;
-          }
-
-          .embedded-link {
-            font-size: 0.8rem;
-          }
-        }
-      `}</style>
     </>
   );
 }
+
+const s = {
+  hero: {
+    position: "relative",
+    minHeight: "32vh",
+    marginTop: "80px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    background: "linear-gradient(135deg, #0d1117 0%, #0f172a 100%)",
+  },
+  heroBg: {
+    position: "absolute", inset: 0,
+    background: "radial-gradient(circle at 30% 50%, rgba(96,165,250,0.07) 0%, transparent 60%), radial-gradient(circle at 70% 50%, rgba(167,139,250,0.07) 0%, transparent 60%)",
+    pointerEvents: "none",
+  },
+  heroContent: {
+    position: "relative", zIndex: 2,
+    textAlign: "center", maxWidth: "700px", padding: "3rem 2rem",
+  },
+  breadcrumb: {
+    display: "flex", alignItems: "center", justifyContent: "center",
+    gap: "0.5rem", fontSize: "0.85rem", marginBottom: "1.5rem",
+  },
+  breadcrumbLink: { color: "var(--blue)", fontWeight: 500, textDecoration: "none" },
+  sep: { color: "var(--text-3)" },
+  breadcrumbCurrent: { color: "var(--text-2)", fontWeight: 600 },
+  heroTitle: {
+    fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 800,
+    background: "linear-gradient(135deg, #f1f5f9, #94a3b8)",
+    WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
+    letterSpacing: "-0.03em", marginBottom: "1rem",
+  },
+  heroSub: { fontSize: "1rem", color: "var(--text-2)", lineHeight: 1.7 },
+
+  container: { maxWidth: "1100px", margin: "0 auto", padding: "4rem 2rem" },
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(min(480px, 100%), 1fr))",
+    gap: "2rem",
+  },
+  card: { display: "flex", flexDirection: "column", overflow: "hidden" },
+  imgWrap: { position: "relative", cursor: "zoom-in", overflow: "hidden" },
+  img: { width: "100%", height: "240px", objectFit: "cover", display: "block", transition: "transform 0.3s ease" },
+  cardBody: { padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem", flex: 1 },
+  cardTop: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+  badge: {
+    fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.06em",
+    color: "var(--blue)", background: "rgba(96,165,250,0.08)",
+    border: "1px solid rgba(96,165,250,0.2)", borderRadius: "20px",
+    padding: "0.2rem 0.7rem",
+  },
+  year: { fontSize: "0.8rem", color: "var(--text-3)", fontWeight: 500 },
+  cardTitle: {
+    fontSize: "1.1rem", fontWeight: 700, color: "var(--text)",
+    lineHeight: 1.4, letterSpacing: "-0.01em",
+  },
+  cardDesc: { fontSize: "0.92rem", color: "var(--text-2)", lineHeight: 1.75, flex: 1 },
+  tags: { display: "flex", flexWrap: "wrap", gap: "0.4rem" },
+  tag: {
+    fontSize: "0.75rem", fontWeight: 500,
+    padding: "0.2rem 0.65rem", borderRadius: "6px",
+    background: "rgba(255,255,255,0.04)", color: "var(--text-2)",
+    border: "1px solid var(--border)",
+  },
+  btn: {
+    display: "inline-flex", alignItems: "center", gap: "0.4rem",
+    padding: "0.6rem 1.2rem", marginTop: "0.25rem",
+    background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+    color: "#fff", borderRadius: "8px", fontWeight: 600,
+    fontSize: "0.85rem", textDecoration: "none", alignSelf: "flex-start",
+    boxShadow: "0 4px 15px rgba(96,165,250,0.25)",
+  },
+};

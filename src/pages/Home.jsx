@@ -1,527 +1,648 @@
-import React from "react";
-import image from "../images/abhina.png"; // Replace with actual path
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import profilePhoto from "../images/abhinav2.png";
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 28 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] },
+});
+
+const fadeIn = (delay = 0) => ({
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  transition: { duration: 0.6, delay },
+});
+
+const ROLES = ["AI Engineer", "Co-founder", "Full Stack Developer", "Research Engineer"];
+
+function useTypewriter(words, typeSpeed = 75, deleteSpeed = 40, pause = 1800) {
+  const [text, setText] = useState("");
+  const [wordIdx, setWordIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const word = words[wordIdx];
+    const speed = deleting ? deleteSpeed : typeSpeed;
+    const timer = setTimeout(() => {
+      if (!deleting) {
+        setText(word.slice(0, text.length + 1));
+        if (text.length + 1 === word.length) {
+          setPaused(true);
+          setTimeout(() => { setPaused(false); setDeleting(true); }, pause);
+        }
+      } else {
+        setText(word.slice(0, text.length - 1));
+        if (text.length - 1 === 0) {
+          setDeleting(false);
+          setWordIdx((i) => (i + 1) % words.length);
+        }
+      }
+    }, speed);
+    return () => clearTimeout(timer);
+  }, [text, deleting, wordIdx, paused, words, typeSpeed, deleteSpeed, pause]);
+
+  return text;
+}
 
 export default function Home() {
-  // Categories data
+  const roleText = useTypewriter(ROLES);
+
+  const whatIDo = [
+    {
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      ),
+      title: "AI Systems Architecture",
+      desc: "Design production-grade AI infrastructure that connects intelligent agents to real business operations — not demos, not prototypes.",
+    },
+    {
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      ),
+      title: "Full Stack Development",
+      desc: "Build end-to-end web applications with modern frameworks — from React frontends to Node.js & Python backends, deployed to cloud.",
+    },
+    {
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+      ),
+      title: "Embedded & Research",
+      desc: "From FPGA signal processing to mycelial network characterisation at UQ's Biome Lab — I work at the intersection of hardware and software.",
+    },
+  ];
+
   const projectCategories = [
     {
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/>
+        </svg>
+      ),
       title: "Research Projects",
-      desc: "Explore my work on advanced research topics and innovative solutions.",
+      desc: "Signal processing, SRCNN imaging, and bio-electrical systems at UQ.",
       link: "/projects/research",
-      icon: "🔬",
+      tag: "Aug 2024 – Jul 2025",
     },
     {
-      title: "Embedded Projects",
-      desc: "Hands-on projects in embedded systems and IoT applications.",
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>
+          <path d="M7 8h.01M10 8h4"/>
+        </svg>
+      ),
+      title: "Embedded Systems",
+      desc: "RTOS, Zephyr, Nordic & STM32 boards, MQTT, IoT sensor networks.",
       link: "/projects/embedded",
-      icon: "⚡",
+      tag: "4 Projects",
     },
     {
-      title: "Full Stack Projects",
-      desc: "Web and app development projects showcasing frontend and backend skills.",
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+        </svg>
+      ),
+      title: "Full Stack",
+      desc: "React, Node.js, Python — SaaS apps, dashboards, and cloud deployments.",
       link: "/projects/fullstack",
-      icon: "💻",
+      tag: "2 Projects",
     },
     {
-      title: "AI & ML Projects",
-      desc: "Artificial Intelligence and Machine Learning projects demonstrating data-driven insights.",
+      icon: (
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+      ),
+      title: "AI & ML",
+      desc: "Computer vision, deep learning, and AI-powered systems built for production.",
       link: "/projects/aiml",
-      icon: "🤖",
+      tag: "1 Project",
     },
   ];
 
   return (
     <>
-      {/* Hero Section */}
-      {/* <section className="hero-section">
-        <div className="hero-background">
-          <div className="hero-overlay" />
-        </div>
-        <div className="hero-content">
-          <h1 className="hero-title">
-            <span className="hero-main">Abhinav</span>
-          </h1>
-          <div className="hero-subtitle">Software Engineer & Tech Innovator</div>
-        </div>
-      </section> */}
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section style={styles.hero}>
+        {/* Background orbs */}
+        <div style={styles.orb1} />
+        <div style={styles.orb2} />
+        <div style={styles.orb3} />
+        <div style={styles.grid} />
 
-      {/* Main Content Section */}
-      <section className="main-container">
-        <div className="profile-section">
-          <div className="profile-photo">
-            <div className="photo-wrapper">
-              <img src={image} alt="Abhinav" className="profile-img" />
+        <div className="home-hero-inner" style={styles.heroInner}>
+          {/* Left: Text */}
+          <div style={styles.heroText}>
+            <motion.div {...fadeUp(0.1)} style={styles.eyebrow}>
+              <span style={styles.termBracket}>[</span>
+              <span style={styles.dot} />
+              <span style={{ color: "var(--green)", fontWeight: 700, fontFamily: "monospace" }}>ONLINE</span>
+              <span style={styles.termBracket}>]</span>
+              <span style={{ color: "var(--text-3)", fontFamily: "monospace" }}>  Brisbane, AU · Open to opportunities</span>
+            </motion.div>
 
-              <div className="photo-border" />
-            </div>
+            <motion.h1 {...fadeUp(0.2)} style={styles.heroName}>
+              Abhinav Singh
+            </motion.h1>
+
+            <motion.div {...fadeUp(0.3)} style={styles.roleRow}>
+              <span style={styles.rolePrefix}>{">"}</span>
+              <span style={styles.roleText}>{roleText}</span>
+              <span style={styles.roleCursor}>█</span>
+            </motion.div>
+
+            <motion.p {...fadeUp(0.4)} style={styles.heroBio}>
+              Co-founder of{" "}
+              <a href="https://singsinghai.com.au" target="_blank" rel="noopener noreferrer" style={styles.inlineLink}>
+                SingSingh AI
+              </a>
+              , building and shipping production AI systems for clients across accounting,
+              property management, and RTOs. RAG pipelines, multi-agent orchestration,
+              MCP integrations — things that actually work. Casual Academic at{" "}
+              <span style={{ color: "var(--blue)" }}>University of Queensland</span>
+              {" "}— tutoring undergraduate engineering. BEng Honours,{" "}
+              <span style={{ color: "var(--blue)" }}>UQ</span>.
+            </motion.p>
+
+            <motion.div {...fadeUp(0.5)} style={styles.ctaRow}>
+              <Link to="/projects" style={styles.btnPrimary}>
+                View My Work
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+              </Link>
+              <Link to="/contacts" style={styles.btnSecondary}>
+                Get in Touch
+              </Link>
+            </motion.div>
+
+            <motion.div {...fadeUp(0.6)} style={styles.statRow}>
+              {[
+                { val: "5.6/7", label: "GPA" },
+                { val: "95%", label: "Time Saved" },
+                { val: "3+", label: "Industries" },
+                { val: "10+", label: "Projects" },
+              ].map((s) => (
+                <div key={s.label} style={styles.stat}>
+                  <span style={styles.statVal}>{s.val}</span>
+                  <span style={styles.statLabel}>{s.label}</span>
+                </div>
+              ))}
+            </motion.div>
           </div>
 
-          <div className="profile-content">
-            <div className="profile-intro">
-              <h2>
-                Hi, I'm <span className="name-highlight">Abhinav</span>
+          {/* Right: Photo */}
+          <motion.div
+            {...fadeIn(0.3)}
+            className="home-hero-photo"
+            style={styles.photoWrap}
+          >
+            <div style={styles.photoGlow} />
+            <motion.img
+              src={profilePhoto}
+              alt="Abhinav Singh"
+              style={styles.photo}
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+          </motion.div>
+        </div>
+
+        {/* Scroll cue */}
+        <motion.div
+          {...fadeIn(1.2)}
+          style={styles.scrollCue}
+          animate={{ y: [0, 6, 0], opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14"/><path d="M5 12l7 7 7-7"/></svg>
+        </motion.div>
+      </section>
+
+      {/* ── What I Do ─────────────────────────────────────────── */}
+      <section style={styles.section}>
+        <div style={styles.container}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            style={styles.sectionHeader}
+          >
+            <span style={styles.sectionLabel}>// WHAT I DO</span>
+            <h2 style={styles.sectionTitle}>
+              I build things that <span className="grad-text">actually run.</span>
+            </h2>
+            <p style={styles.sectionSub}>Not demos. Production.</p>
+          </motion.div>
+
+          <div style={styles.threeGrid}>
+            {whatIDo.map((item, i) => (
+              <motion.div
+                key={item.title}
+                className="glass-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.12 }}
+                style={styles.doCard}
+              >
+                <div style={styles.doIcon}>{item.icon}</div>
+                <h3 style={styles.doTitle}>{item.title}</h3>
+                <p style={styles.doDesc}>{item.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Project Categories ─────────────────────────────────── */}
+      <section style={styles.section}>
+        <div style={styles.container}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            style={styles.sectionHeader}
+          >
+            <span style={styles.sectionLabel}>// PORTFOLIO</span>
+            <h2 style={styles.sectionTitle}>Project Categories</h2>
+            <p style={styles.sectionSub}>Work across four domains of engineering and research</p>
+          </motion.div>
+
+          <div style={styles.fourGrid}>
+            {projectCategories.map((cat, i) => (
+              <motion.div
+                key={cat.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <Link to={cat.link} style={styles.catCardLink}>
+                  <div className="glass-card" style={styles.catCard}>
+                    <div style={styles.catIcon}>{cat.icon}</div>
+                    <div style={styles.catTag}>{cat.tag}</div>
+                    <h3 style={styles.catTitle}>{cat.title}</h3>
+                    <p style={styles.catDesc}>{cat.desc}</p>
+                    <div style={styles.catArrow}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Strip ─────────────────────────────────────────── */}
+      <section style={styles.section}>
+        <div style={styles.container}>
+          <motion.div
+            className="glass-card"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            style={styles.ctaStrip}
+          >
+            <div>
+              <h2 style={{ ...styles.sectionTitle, marginBottom: "0.5rem" }}>
+                Let's build something <span className="grad-text">together.</span>
               </h2>
-              <p className="profile-description">
-                A passionate Software Engineering graduate from the University
-                of Queensland, dedicated to creating innovative solutions and
-                pushing the boundaries of technology. I have extensive
-                experience in full-stack development, AI/ML implementations, and
-                IoT systems.
+              <p style={styles.sectionSub}>
+                Whether it's an AI system, a web app, or a research problem — I'm interested.
               </p>
-              <div className="profile-stats">
-                <div className="stat-item">
-                  <span className="stat-number">4</span>
-                  <span className="stat-label">Project Categories</span>
-                </div>
-                <div className="stat-item">
-                  <span className="stat-number">UQ</span>
-                  <span className="stat-label">Graduate</span>
-                </div>
-              </div>
             </div>
-            <div className="cta-buttons">
-              <Link to="/projects" className="btn btn-primary">
-                <span>View Projects</span>
-                <span className="btn-arrow">→</span>
-              </Link>
-              <Link to="/profile" className="btn btn-secondary">
-                <span>About Me</span>
-                <span className="btn-arrow">→</span>
-              </Link>
+            <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <Link to="/contacts" style={styles.btnPrimary}>Get in Touch</Link>
+              <Link to="/profile" style={styles.btnSecondary}>About Me</Link>
             </div>
-          </div>
+          </motion.div>
         </div>
-        <hr className="section-separator" />
       </section>
 
-      {/* Project Categories Section */}
-      <section className="categories-section">
-        <div className="section-header">
-          <h2>Project Categories</h2>
-          <p>Discover my work across different domains of technology</p>
-        </div>
-
-        <div className="categories-grid">
-          {projectCategories.map(({ title, desc, link, icon }) => (
-            <Link
-              to={link}
-              key={title}
-              className="category-card"
-              aria-label={`Go to ${title}`}
-            >
-              <div className="card-icon">{icon}</div>
-              <div className="card-content">
-                <h3>{title}</h3>
-                <p>{desc}</p>
-              </div>
-              <div className="card-arrow">→</div>
-            </Link>
-          ))}
-        </div>
-        <hr className="section-separator" />
-      </section>
-
-      <style>
-        {`
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-
-          body {
-            background: #0a0a0a;
-            color: #ffffff;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-          }
-
-          a {
-            color: #10b981;
-            text-decoration: none;
-          }
-
-          a:hover {
-            color: #34d399;
-          }
-
-          /* Hero Section */
-          .hero-section {
-            position: relative;
-            min-height: 30vh;
-            margin-top: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-          }
-
-          .hero-background {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%);
-          }
-
-          .hero-background::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
-          }
-
-          .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.3);
-          }
-
-          .hero-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            max-width: 800px;
-            padding: 0 2rem;
-          }
-
-          .hero-title {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-
-          .hero-main {
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #10b981, #059669, #047857);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.02em;
-          }
-
-          .hero-subtitle {
-            font-size: 1.25rem;
-            color: #cbd5e1;
-            margin-top: 1rem;
-            font-weight: 300;
-          }
-
-          /* Main Container */
-          .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            margin-top: 80px;
-            padding: 3rem 1.5rem;
-          }
-
-          .section-separator {
-            border: 0;
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.5), transparent);
-            margin: 2rem auto;
-            width: 50%;
-          }
-
-          .profile-section {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 4rem;
-            align-items: center;
-          }
-
-          /* Profile Photo */
-          .profile-photo {
-            display: flex;
-            justify-content: center;
-          }
-
-          .photo-wrapper {
-            position: relative;
-            width: 300px;
-            height: 300px;
-          }
-
-          .profile-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 20px;
-            filter: grayscale(20%) brightness(1.1);
-            transition: all 0.3s ease;
-          }
-
-          .profile-img:hover {
-            filter: grayscale(0%) brightness(1.2);
-            transform: scale(1.02);
-          }
-
-          .photo-border {
-            position: absolute;
-            inset: -4px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            border-radius: 24px;
-            z-index: -1;
-            opacity: 0.8;
-          }
-
-          /* Profile Content */
-          .profile-content {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            margin-top: 10px;
-          }
-
-          .profile-intro h2 {
-            font-size: 2.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #f8fafc;
-          }
-
-          .name-highlight {
-            background: linear-gradient(135deg, #10b981, #059669);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
-
-          .profile-description {
-            font-size: 1.125rem;
-            color: #cbd5e1;
-            line-height: 1.7;
-            margin-bottom: 2rem;
-          }
-
-          .profile-stats {
-            display: flex;
-            gap: 3rem;
-            margin-bottom: 1rem;
-          }
-
-          .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-          }
-
-          .stat-number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #10b981;
-          }
-
-          .stat-label {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-          }
-
-          /* CTA Buttons */
-          .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-          }
-
-          .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1.5rem;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: 15px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-          }
-
-          .btn-primary {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-          }
-
-          .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(16, 185, 129, 0.4);
-          }
-
-          .btn-secondary {
-            background: rgba(30, 41, 59, 0.8);
-            color: #e2e8f0;
-            border-color: #475569;
-          }
-
-          .btn-secondary:hover {
-            background: rgba(51, 65, 85, 0.9);
-            border-color: #64748b;
-            transform: translateY(-2px);
-          }
-
-          .btn-arrow {
-            font-size: 0.9rem;
-            transition: transform 0.3s ease;
-          }
-
-          .btn:hover .btn-arrow {
-            transform: translateX(4px);
-          }
-
-          /* Categories Section */
-          .categories-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
-          }
-
-          .section-header {
-            margin-bottom: 3rem;
-            text-align: center;
-          }
-
-          .section-header h2 {
-            font-size: 2.75rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #f8fafc, #cbd5e1);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
-
-          .section-header p {
-            font-size: 1rem;
-            color: #94a3b8;
-          }
-
-          .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-          }
-
-          .category-card {
-            display: flex;
-            flex-direction: column;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(51, 65, 85, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            min-height: 300px;
-          }
-
-          .category-card:hover {
-            transform: translateY(-8px);
-            border-color: #10b981;
-            box-shadow: 0 25px 50px rgba(16, 185, 129, 0.3);
-          }
-
-          .card-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            filter: grayscale(100%);
-            transition: filter 0.3s ease;
-          }
-
-          .category-card:hover .card-icon {
-            filter: grayscale(0%);
-          }
-
-          .card-content {
-            flex: 1;
-            margin-bottom: 1rem;
-          }
-
-          .card-content h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #f8fafc;
-            margin-bottom: 0.75rem;
-          }
-
-          .card-content p {
-            color: #cbd5e1;
-            line-height: 1.6;
-          }
-
-          .card-arrow {
-            align-self: flex-end;
-            font-size: 1.5rem;
-            color: #10b981;
-            transition: transform 0.3s ease;
-          }
-
-          .category-card:hover .card-arrow {
-            transform: translateX(8px);
-          }
-
-          /* Responsive Design */
-          @media (max-width: 768px) {
-            .hero-main {
-              font-size: 3rem;
-            }
-
-            .profile-section {
-              grid-template-columns: 1fr;
-              gap: 3rem;
-              text-align: center;
-            }
-
-            .photo-wrapper {
-              width: 250px;
-              height: 250px;
-            }
-
-            .profile-intro h2 {
-              font-size: 2rem;
-            }
-
-            .profile-stats {
-              justify-content: center;
-            }
-
-            .cta-buttons {
-              justify-content: center;
-            }
-
-            .section-header h2 {
-              font-size: 2.25rem;
-            }
-
-            .categories-grid {
-              grid-template-columns: 1fr;
-            }
-          }
-
-          @media (max-width: 480px) {
-            .hero-main {
-              font-size: 2.5rem;
-            }
-
-            .main-container,
-            .categories-section {
-              padding: 2rem 1rem;
-            }
-
-            .btn {
-              padding: 0.5rem 1.5rem;
-            }
-
-            .profile-intro h2 {
-              font-size: 1.75rem;
-            }
-          }
-        `}
-      </style>
+      <style>{`
+        @keyframes rotateBorder {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </>
   );
 }
+
+/* ── Inline Styles ─────────────────────────────────────────── */
+const styles = {
+  hero: {
+    position: "relative",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    paddingTop: "80px",
+  },
+  orb1: {
+    position: "absolute",
+    top: "10%",
+    left: "5%",
+    width: "500px",
+    height: "500px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(96,165,250,0.12) 0%, transparent 70%)",
+    filter: "blur(40px)",
+    pointerEvents: "none",
+  },
+  orb2: {
+    position: "absolute",
+    bottom: "10%",
+    right: "5%",
+    width: "600px",
+    height: "600px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(167,139,250,0.10) 0%, transparent 70%)",
+    filter: "blur(50px)",
+    pointerEvents: "none",
+  },
+  orb3: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%,-50%)",
+    width: "800px",
+    height: "400px",
+    borderRadius: "50%",
+    background: "radial-gradient(ellipse, rgba(34,211,238,0.05) 0%, transparent 70%)",
+    filter: "blur(60px)",
+    pointerEvents: "none",
+  },
+  grid: {
+    position: "absolute",
+    inset: 0,
+    backgroundImage:
+      "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
+    backgroundSize: "60px 60px",
+    pointerEvents: "none",
+  },
+  heroInner: {
+    position: "relative",
+    zIndex: 2,
+    maxWidth: "1200px",
+    width: "100%",
+    margin: "0 auto",
+    padding: "3rem 2rem",
+    display: "grid",
+    gridTemplateColumns: "1fr 380px",
+    gap: "4rem",
+    alignItems: "center",
+  },
+  heroText: { display: "flex", flexDirection: "column", gap: "1.5rem" },
+  eyebrow: {
+    display: "flex",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: "0.5rem",
+    fontSize: "0.85rem",
+    color: "var(--text-2)",
+    fontWeight: 500,
+    letterSpacing: "0.04em",
+  },
+  dot: {
+    width: "8px",
+    height: "8px",
+    borderRadius: "50%",
+    background: "var(--green)",
+    display: "inline-block",
+    animation: "pulse-dot 2s ease infinite",
+    flexShrink: 0,
+  },
+  heroName: {
+    fontSize: "clamp(2.8rem, 6vw, 5rem)",
+    fontWeight: 800,
+    letterSpacing: "-0.03em",
+    lineHeight: 1.1,
+    paddingRight: "0.06em",
+    background: "linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%)",
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+  },
+  termBracket: {
+    color: "rgba(96,165,250,0.5)", fontFamily: "monospace", fontWeight: 700,
+  },
+  roleRow: {
+    display: "flex", alignItems: "center", gap: "0.5rem",
+    height: "2rem", overflow: "hidden",
+  },
+  rolePrefix: {
+    fontFamily: "'SF Mono', 'Fira Code', monospace",
+    color: "var(--blue)", fontWeight: 700, fontSize: "1.2rem",
+  },
+  roleText: {
+    fontSize: "1.25rem",
+    fontWeight: 600,
+    fontFamily: "'SF Mono', 'Fira Code', monospace",
+    background: "var(--grad)",
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    letterSpacing: "-0.01em",
+    minWidth: "2ch",
+  },
+  roleCursor: {
+    color: "var(--blue)", fontSize: "1rem",
+    animation: "blink 1s step-end infinite",
+  },
+  heroBio: {
+    fontSize: "1.1rem",
+    color: "var(--text-2)",
+    lineHeight: 1.75,
+    maxWidth: "560px",
+  },
+  inlineLink: {
+    color: "var(--cyan)",
+    textDecoration: "underline",
+    textDecorationColor: "rgba(34,211,238,0.3)",
+  },
+  ctaRow: { display: "flex", gap: "0.75rem", flexWrap: "wrap" },
+  btnPrimary: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    padding: "0.7rem 1.6rem",
+    background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+    color: "#fff",
+    borderRadius: "10px",
+    fontWeight: 600,
+    fontSize: "0.95rem",
+    textDecoration: "none",
+    transition: "opacity 0.2s, transform 0.2s",
+    boxShadow: "0 4px 20px rgba(96,165,250,0.3)",
+  },
+  btnSecondary: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "0.5rem",
+    padding: "0.7rem 1.6rem",
+    background: "rgba(255,255,255,0.04)",
+    color: "var(--text-2)",
+    border: "1px solid var(--border)",
+    borderRadius: "10px",
+    fontWeight: 600,
+    fontSize: "0.95rem",
+    textDecoration: "none",
+    transition: "background 0.2s, border-color 0.2s",
+  },
+  statRow: {
+    display: "flex",
+    gap: "2.5rem",
+    flexWrap: "wrap",
+    paddingTop: "0.5rem",
+    borderTop: "1px solid var(--border)",
+  },
+  stat: { display: "flex", flexDirection: "column", gap: "2px" },
+  statVal: {
+    fontSize: "1.6rem",
+    fontWeight: 800,
+    background: "var(--grad)",
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    letterSpacing: "-0.02em",
+  },
+  statLabel: { fontSize: "0.78rem", color: "var(--text-3)", textTransform: "uppercase", letterSpacing: "0.06em" },
+
+  photoWrap: {
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  photoGlow: {
+    position: "absolute",
+    width: "340px",
+    height: "340px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(96,165,250,0.18) 0%, transparent 70%)",
+    filter: "blur(30px)",
+  },
+  photo: {
+    position: "relative",
+    width: "320px",
+    objectFit: "contain",
+    borderRadius: "20px",
+    border: "1px solid rgba(255,255,255,0.08)",
+    boxShadow: "0 30px 60px rgba(0,0,0,0.5)",
+    zIndex: 1,
+  },
+  photoBadge: {
+    position: "absolute",
+    bottom: "-14px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "flex",
+    alignItems: "center",
+    gap: "0.4rem",
+    background: "rgba(4,8,26,0.9)",
+    border: "1px solid var(--border)",
+    borderRadius: "20px",
+    padding: "0.4rem 1rem",
+    zIndex: 2,
+    backdropFilter: "blur(10px)",
+    whiteSpace: "nowrap",
+  },
+  badgeDot: {
+    width: "7px",
+    height: "7px",
+    borderRadius: "50%",
+    background: "var(--green)",
+    animation: "pulse-dot 2s infinite",
+    flexShrink: 0,
+  },
+  scrollCue: {
+    position: "absolute",
+    bottom: "2rem",
+    left: "50%",
+    transform: "translateX(-50%)",
+    color: "var(--text-3)",
+    zIndex: 2,
+  },
+
+  section: { padding: "5rem 0" },
+  container: { maxWidth: "1200px", margin: "0 auto", padding: "0 2rem" },
+  sectionHeader: { textAlign: "center", marginBottom: "3.5rem" },
+  sectionLabel: {
+    fontSize: "0.75rem",
+    fontWeight: 600,
+    letterSpacing: "0.15em",
+    color: "var(--blue)",
+    textTransform: "uppercase",
+    display: "block",
+    marginBottom: "0.75rem",
+  },
+  sectionTitle: {
+    fontSize: "clamp(1.8rem, 3.5vw, 2.5rem)",
+    fontWeight: 800,
+    color: "var(--text)",
+    letterSpacing: "-0.02em",
+    lineHeight: 1.2,
+    marginBottom: "0.75rem",
+  },
+  sectionSub: { fontSize: "1rem", color: "var(--text-2)" },
+
+  threeGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "1.5rem",
+  },
+  doCard: { padding: "2rem", display: "flex", flexDirection: "column", gap: "1rem" },
+  doIcon: { color: "var(--blue)", width: "28px", height: "28px" },
+  doTitle: { fontSize: "1.15rem", fontWeight: 700, color: "var(--text)" },
+  doDesc: { fontSize: "0.95rem", color: "var(--text-2)", lineHeight: 1.7 },
+
+  fourGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+    gap: "1.25rem",
+  },
+  catCardLink: { textDecoration: "none", color: "inherit", display: "block" },
+  catCard: {
+    padding: "1.75rem",
+    display: "flex",
+    flexDirection: "column",
+    gap: "0.75rem",
+    minHeight: "230px",
+    cursor: "pointer",
+  },
+  catIcon: { color: "var(--blue)", width: "28px", height: "28px" },
+  catTag: {
+    fontSize: "0.72rem",
+    color: "var(--blue)",
+    fontWeight: 600,
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+  },
+  catTitle: { fontSize: "1.1rem", fontWeight: 700, color: "var(--text)" },
+  catDesc: { fontSize: "0.875rem", color: "var(--text-2)", lineHeight: 1.6, flex: 1 },
+  catArrow: {
+    color: "var(--blue)",
+    alignSelf: "flex-end",
+    transition: "transform 0.2s ease",
+  },
+
+  ctaStrip: {
+    padding: "3rem",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "2rem",
+    flexWrap: "wrap",
+    background: "linear-gradient(135deg, rgba(96,165,250,0.06), rgba(167,139,250,0.06))",
+    borderColor: "rgba(96,165,250,0.15)",
+  },
+};

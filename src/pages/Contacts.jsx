@@ -1,894 +1,391 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import emailjs from "@emailjs/browser";
 
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] },
+});
+
+const contactLinks = [
+  {
+    title: "Email",
+    value: "abhinavsinghkanwal@gmail.com",
+    href: "mailto:abhinavsinghkanwal@gmail.com",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+    ),
+    color: "var(--blue)",
+  },
+  {
+    title: "LinkedIn",
+    value: "linkedin.com/in/abhinav3838",
+    href: "https://linkedin.com/in/abhinav3838",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+        <circle cx="4" cy="4" r="2"/>
+      </svg>
+    ),
+    color: "var(--blue)",
+  },
+  {
+    title: "GitHub",
+    value: "github.com/Abhinavmohindersingh",
+    href: "https://github.com/Abhinavmohindersingh",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+      </svg>
+    ),
+    color: "var(--violet)",
+  },
+];
+
 export default function Contacts() {
-  // Form state
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
+  const [form, setForm] = useState({ fullName: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [sending, setSending] = useState(false);
 
-  // Contact methods data
-  const contactMethods = [
-    {
-      title: "Email",
-      description: "Send me a message and I'll get back to you within 24 hours",
-      icon: "📧",
-      value: "abhinavsinghkanwal@gmail.com",
-      link: "mailto:abhinavsinghkanwal@gmail.com",
-      color: "blue",
-    },
-    {
-      title: "LinkedIn",
-      description: "Connect with me professionally and view my career journey",
-      icon: "💼",
-      value: "linkedin.com/in/abhinav",
-      link: "https://linkedin.com/in/abhinav3838",
-      color: "blue",
-    },
-    {
-      title: "GitHub",
-      description:
-        "Explore my code repositories and contribute to open source projects",
-      icon: "🔗",
-      value: "github.com/abhinav",
-      link: "https://github.com/Abhinavmohindersingh",
-      color: "purple",
-    },
-  ];
+  useEffect(() => { emailjs.init("XGBQPdYVyW68c7LkL"); }, []);
 
-  // Collaboration types
-  const collaborationTypes = [
-    {
-      title: "Full-time Opportunities",
-      description:
-        "Seeking challenging roles in software engineering, AI/ML, or research positions",
-      icon: "💼",
-      tags: [
-        "Software Engineer",
-        "AI/ML Engineer",
-        "Research Scientist",
-        "Full Stack Developer",
-      ],
-    },
-    {
-      title: "Freelance Projects",
-      description:
-        "Available for consulting on web development, AI implementations, and technical solutions",
-      icon: "🚀",
-      tags: [
-        "Web Development",
-        "AI Consulting",
-        "Technical Architecture",
-        "Code Review",
-      ],
-    },
-    {
-      title: "Research Collaboration",
-      description:
-        "Open to academic partnerships and collaborative research in AI, ML, and computer science",
-      icon: "🔬",
-      tags: [
-        "Academic Research",
-        "Paper Collaboration",
-        "Peer Review",
-        "Conference Presentations",
-      ],
-    },
-    {
-      title: "Open Source",
-      description:
-        "Contributing to meaningful open source projects and building developer tools",
-      icon: "🌟",
-      tags: [
-        "Open Source",
-        "Developer Tools",
-        "Community Projects",
-        "Technical Writing",
-      ],
-    },
-  ];
+  const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const availability = {
-    status: "Available",
-    description: "Currently seeking new opportunities",
-    timeline: "Immediate start available",
-    location: "Brisbane, Australia (Open to remote work)",
-  };
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init("XGBQPdYVyW68c7LkL");
-  }, []);
-
-  // Handle form input changes
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Validate email format
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setStatus("");
-
-    if (!validateEmail(formData.email)) {
-      setStatus("Please enter a valid email address");
-      setIsSubmitting(false);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setStatus("error:Please enter a valid email address.");
       return;
     }
-
-    const serviceID = "service_bt38qfj"; // Your Gmail Service ID
-    const templateID = "template_h1xa2nq"; // Replace with your EmailJS Template ID
-
-    emailjs
-      .send(serviceID, templateID, {
-        from_name: formData.fullName,
-        from_email: formData.email,
-        subject: formData.subject,
-        message: formData.message,
-      })
-      .then(
-        () => {
-          setStatus("Message sent successfully!");
-          setFormData({ fullName: "", email: "", subject: "", message: "" });
-          setIsSubmitting(false);
-        },
-        (error) => {
-          setStatus(`Failed to send message: ${error.text}`);
-          setIsSubmitting(false);
-        }
-      );
+    setSending(true);
+    setStatus("");
+    emailjs.send("service_uijgvdo", "template_h1xa2nq", {
+      from_name: form.fullName,
+      from_email: form.email,
+      subject: form.subject,
+      message: form.message,
+    }).then(
+      () => { setStatus("success:Message sent! I'll get back to you soon."); setForm({ fullName: "", email: "", subject: "", message: "" }); setSending(false); },
+      (err) => { setStatus(`error:Failed to send: ${err.text}`); setSending(false); }
+    );
   };
+
+  const statusParts = status.split(":");
+  const statusType = statusParts[0];
+  const statusMsg = statusParts.slice(1).join(":");
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="contact-hero">
-        <div className="hero-background">
-          <div className="hero-overlay"></div>
-        </div>
-        <div className="hero-content">
-          <h1 className="hero-title">Let's Connect</h1>
-          <p className="hero-subtitle">
-            Ready to collaborate, innovate, and build something amazing together
-          </p>
-          <div className="availability-card">
-            <div className="availability-status">
-              <span className="status-indicator"></span>
-              <span className="status-text">{availability.status}</span>
-            </div>
-            <p className="availability-desc">{availability.description}</p>
-            <div className="availability-details">
-              <span>📍 {availability.location}</span>
-              <span>⏰ {availability.timeline}</span>
-            </div>
-          </div>
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section style={s.hero}>
+        <div style={s.orb1} />
+        <div style={s.orb2} />
+        <div style={s.heroInner}>
+          <motion.div {...fadeUp(0.1)} style={s.heroLabel}>GET IN TOUCH</motion.div>
+          <motion.h1 {...fadeUp(0.2)} style={s.heroTitle}>
+            Let's <span className="grad-text">Connect.</span>
+          </motion.h1>
+          <motion.p {...fadeUp(0.3)} style={s.heroSub}>
+            Open to full-time roles, freelance projects, AI consulting, and research collaborations.
+          </motion.p>
+          <motion.div {...fadeUp(0.4)} style={s.availBadge}>
+            <span style={s.availDot} />
+            <span style={{ color: "var(--green)", fontWeight: 600, fontSize: "0.9rem" }}>
+              Available · Brisbane, Australia · Open to remote
+            </span>
+          </motion.div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <div className="contact-container">
-        {/* Contact Methods Section */}
-        <section className="contact-methods-section">
-          <div className="section-header">
-            <h2>Get In Touch</h2>
-            <p>
-              Choose your preferred way to reach out - I'm always excited to
-              hear from fellow developers, potential collaborators, and
-              interesting people
-            </p>
-          </div>
-
-          <div className="contact-methods-grid">
-            {contactMethods.map((method, index) => (
-              <a
-                key={method.title}
-                href={method.link}
-                className="contact-method-card"
-                target={method.link.startsWith("http") ? "_blank" : "_self"}
-                rel={
-                  method.link.startsWith("http") ? "noopener noreferrer" : ""
-                }
+      <div style={s.container}>
+        {/* ── Contact Links ─────────────────────────────────── */}
+        <section style={s.section}>
+          <div style={s.linksGrid}>
+            {contactLinks.map((c, i) => (
+              <motion.a
+                key={c.title}
+                href={c.href}
+                target={c.href.startsWith("http") ? "_blank" : "_self"}
+                rel={c.href.startsWith("http") ? "noopener noreferrer" : ""}
+                className="glass-card"
+                {...fadeUp(i * 0.1)}
+                style={s.linkCard}
               >
-                <div className="method-icon">{method.icon}</div>
-                <div className="method-content">
-                  <h3>{method.title}</h3>
-                  <p className="method-description">{method.description}</p>
-                  <span className="method-value">{method.value}</span>
+                <div style={{ ...s.linkIcon, color: c.color }}>{c.icon}</div>
+                <div>
+                  <div style={s.linkTitle}>{c.title}</div>
+                  <div style={s.linkValue}>{c.value}</div>
                 </div>
-                <div className="method-arrow">→</div>
-              </a>
+                <div style={{ ...s.linkArrow, color: c.color }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+                </div>
+              </motion.a>
             ))}
           </div>
-          <hr className="section-separator" />
         </section>
 
-        {/* Contact Form Section */}
-        <section className="contact-form-section">
-          <div className="form-container">
-            <div className="form-header">
-              <h2>Send a Message</h2>
-              <p>
-                Have a specific project in mind or just want to say hello? Drop
-                me a message and I'll get back to you soon.
+        {/* ── Form ──────────────────────────────────────────── */}
+        <section style={s.section}>
+          <div style={s.formWrap}>
+            <motion.div {...fadeUp(0)} style={s.formHeader}>
+              <span style={s.label}>SEND A MESSAGE</span>
+              <h2 style={s.formTitle}>Have a project in mind?</h2>
+              <p style={{ color: "var(--text-2)", fontSize: "0.95rem" }}>
+                Drop me a message and I'll get back to you within 24 hours.
               </p>
-            </div>
+            </motion.div>
 
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="fullName">Full Name</label>
-                  <div className="input-wrapper">
-                    <input
-                      type="text"
-                      id="fullName"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleInputChange}
-                      placeholder="Your full name"
-                      required
-                      aria-required="true"
-                    />
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email Address</label>
-                  <div className="input-wrapper">
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="your.email@example.com"
-                      required
-                      aria-required="true"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="subject">Subject</label>
-                <div className="select-wrapper">
-                  <select
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
+            <motion.form
+              className="glass-card"
+              {...fadeUp(0.1)}
+              style={s.form}
+              onSubmit={handleSubmit}
+            >
+              <div className="contact-form-row" style={s.formRow}>
+                <div style={s.formGroup}>
+                  <label style={s.formLabel}>Full Name</label>
+                  <input
+                    name="fullName"
+                    value={form.fullName}
+                    onChange={handleChange}
+                    placeholder="Your full name"
                     required
-                    aria-required="true"
-                  >
-                    <option value="">Select a topic</option>
-                    <option value="job-opportunity">Job Opportunity</option>
-                    <option value="freelance-project">Freelance Project</option>
-                    <option value="collaboration">Collaboration</option>
-                    <option value="general-inquiry">General Inquiry</option>
-                    <option value="other">Other</option>
-                  </select>
+                    style={s.input}
+                  />
                 </div>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="message">Message</label>
-                <div className="textarea-wrapper">
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows="6"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    placeholder="Tell me about your project, opportunity, or just say hello..."
+                <div style={s.formGroup}>
+                  <label style={s.formLabel}>Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="you@example.com"
                     required
-                    aria-required="true"
-                  ></textarea>
+                    style={s.input}
+                  />
                 </div>
               </div>
 
-              <button
-                className="submit-btn"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                <span>{isSubmitting ? "Sending..." : "Send Message"}</span>
-                <span className="btn-arrow">✉️</span>
+              <div style={s.formGroup}>
+                <label style={s.formLabel}>Subject</label>
+                <select name="subject" value={form.subject} onChange={handleChange} required style={s.input}>
+                  <option value="">Select a topic</option>
+                  <option value="job-opportunity">Job Opportunity</option>
+                  <option value="freelance-project">Freelance / Consulting</option>
+                  <option value="ai-consulting">AI Systems Consulting</option>
+                  <option value="collaboration">Collaboration</option>
+                  <option value="general">General Inquiry</option>
+                </select>
+              </div>
+
+              <div style={s.formGroup}>
+                <label style={s.formLabel}>Message</label>
+                <textarea
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
+                  rows={5}
+                  placeholder="Tell me about your project, opportunity, or idea..."
+                  required
+                  style={{ ...s.input, resize: "vertical", fontFamily: "inherit" }}
+                />
+              </div>
+
+              <button type="submit" disabled={sending} style={s.submitBtn}>
+                {sending ? "Sending..." : "Send Message"}
+                {!sending && (
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                )}
               </button>
 
               {status && (
-                <p
-                  className={`status-message ${
-                    status.includes("Failed") ? "error" : "success"
-                  }`}
-                >
-                  {status}
-                </p>
+                <div style={{ ...s.statusMsg, color: statusType === "success" ? "var(--green)" : "#f87171" }}>
+                  {statusMsg}
+                </div>
               )}
-            </form>
+            </motion.form>
           </div>
-          <hr className="section-separator" />
         </section>
 
-        {/* Collaboration Section */}
-        <section className="collaboration-section">
-          <div className="section-header">
-            <h2>Collaboration Opportunities</h2>
-            <p>
-              I'm always interested in working on exciting projects and
-              connecting with like-minded professionals
-            </p>
-          </div>
-
-          <div className="collaboration-grid">
-            {collaborationTypes.map((type, index) => (
-              <div key={type.title} className="collaboration-card">
-                <div className="collab-header">
-                  <span className="collab-icon">{type.icon}</span>
-                  <h3>{type.title}</h3>
-                </div>
-                <p className="collab-description">{type.description}</p>
-                <div className="collab-tags">
-                  {type.tags.map((tag, idx) => (
-                    <span key={idx} className="collab-tag">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+        {/* ── Opportunities ─────────────────────────────────── */}
+        <section style={{ ...s.section, paddingBottom: "2rem" }}>
+          <motion.div {...fadeUp(0)} style={s.sectionHeader}>
+            <span style={s.label}>OPEN TO</span>
+            <h2 style={s.formTitle}>Collaboration Types</h2>
+          </motion.div>
+          <div style={s.oppGrid}>
+            {[
+              {
+                title: "Full-time Roles",
+                desc: "Software Engineer, AI/ML Engineer, Systems Architect, Full Stack Developer.",
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+                ),
+              },
+              {
+                title: "Freelance & Consulting",
+                desc: "AI system design, web development, technical architecture, code review.",
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                ),
+              },
+              {
+                title: "Research",
+                desc: "Academic partnerships in AI, embedded systems, and computational biology.",
+                icon: (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+                ),
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                className="glass-card"
+                {...fadeUp(i * 0.1)}
+                style={s.oppCard}
+              >
+                <div style={{ color: "var(--blue)" }}>{item.icon}</div>
+                <h3 style={s.oppTitle}>{item.title}</h3>
+                <p style={s.oppDesc}>{item.desc}</p>
+              </motion.div>
             ))}
           </div>
-          <hr className="section-separator" />
         </section>
       </div>
-
-      <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        body {
-          background: #0a0a0a;
-          color: #ffffff;
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-          line-height: 1.6;
-        }
-
-        a {
-          color: #10b981;
-          text-decoration: none;
-        }
-
-        a:hover {
-          color: #34d399;
-        }
-
-        /* Hero Section */
-        .contact-hero {
-          position: relative;
-          min-height: 30vh;
-          margin-top: 80px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-        }
-
-        .hero-background {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%);
-        }
-
-        .hero-background::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at 30% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-                      radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
-        }
-
-        .hero-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-content {
-          position: relative;
-          z-index: 2;
-          text-align: center;
-          max-width: 800px;
-          padding: 0 2rem;
-        }
-
-        .hero-title {
-          font-size: 3.5rem;
-          font-weight: 800;
-          background: linear-gradient(135deg, #10b981, #059669, #047857);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          letter-spacing: -0.02em;
-          margin-bottom: 1rem;
-        }
-
-        .hero-subtitle {
-          font-size: 1.25rem;
-          color: #cbd5e1;
-          font-weight: 300;
-          margin-bottom: 3rem;
-        }
-
-        .availability-card {
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(51, 65, 85, 0.3);
-          border-radius: 20px;
-          padding: 2rem;
-          backdrop-filter: blur(10px);
-          max-width: 500px;
-          margin: 0 auto;
-        }
-
-        .availability-status {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 1rem;
-          justify-content: center;
-        }
-
-        .status-indicator {
-          width: 12px;
-          height: 12px;
-          background: #10b981;
-          border-radius: 50%;
-          animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-
-        .status-text {
-          font-weight: 600;
-          color: #10b981;
-          font-size: 1.125rem;
-        }
-
-        .availability-desc {
-          color: #cbd5e1;
-          margin-bottom: 1rem;
-          text-align: center;
-        }
-
-        .availability-details {
-          display: flex;
-          justify-content: space-between;
-          gap: 1rem;
-          font-size: 0.875rem;
-          color: #94a3b8;
-        }
-
-        /* Main Container */
-        .contact-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 3rem 1.5rem;
-        }
-
-        .section-separator {
-          border: 0;
-          height: 1px;
-          background: linear-gradient(to right, transparent, rgba(16, 185, 129, 0.5), transparent);
-          margin: 2rem auto;
-          width: 50%;
-        }
-
-        /* Section Headers */
-        .section-header {
-          text-align: center;
-          margin-bottom: 3rem;
-        }
-
-        .section-header h2 {
-          font-size: 2.75rem;
-          font-weight: 800;
-          margin-bottom: 0.5rem;
-          background: linear-gradient(135deg, #f8fafc, #cbd5e1);
-          background-clip: text;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-        }
-
-        .section-header p {
-          font-size: 1rem;
-          color: #94a3b8;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-
-        /* Contact Methods Section */
-        .contact-methods-section {
-          margin-bottom: 4rem;
-        }
-
-        .contact-methods-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-        }
-
-        .contact-method-card {
-          display: flex;
-          align-items: center;
-          gap: 1.5rem;
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(51, 65, 85, 0.3);
-          border-radius: 20px;
-          padding: 2rem;
-          text-decoration: none;
-          color: inherit;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-          min-height: 200px;
-        }
-
-        .contact-method-card:hover {
-          transform: translateY(-8px);
-          border-color: #10b981;
-          box-shadow: 0 25px 50px rgba(16, 185, 129, 0.3);
-        }
-
-        .method-icon {
-          font-size: 2.5rem;
-          min-width: 60px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          filter: grayscale(100%);
-          transition: filter 0.3s ease;
-        }
-
-        .contact-method-card:hover .method-icon {
-          filter: grayscale(0%);
-        }
-
-        .method-content {
-          flex: 1;
-        }
-
-        .method-content h3 {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #f8fafc;
-          margin-bottom: 0.5rem;
-        }
-
-        .method-description {
-          color: #cbd5e1;
-          font-size: 0.875rem;
-          margin-bottom: 0.75rem;
-          line-height: 1.5;
-        }
-
-        .method-value {
-          color: #10b981;
-          font-weight: 600;
-          font-size: 0.875rem;
-        }
-
-        .method-arrow {
-          font-size: 1.5rem;
-          color: #10b981;
-          transition: transform 0.3s ease;
-        }
-
-        .contact-method-card:hover .method-arrow {
-          transform: translateX(4px);
-        }
-
-        /* Contact Form Section */
-        .contact-form-section {
-          margin-bottom: 4rem;
-        }
-
-        .form-container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-
-        .form-header {
-          text-align: center;
-          margin-bottom: 2rem;
-        }
-
-        .form-header h2 {
-          font-size: 2.25rem;
-          font-weight: 700;
-          color: #f8fafc;
-          margin-bottom: 0.5rem;
-        }
-
-        .form-header p {
-          color: #cbd5e1;
-          font-size: 1rem;
-        }
-
-        .contact-form {
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(51, 65, 85, 0.3);
-          border-radius: 20px;
-          padding: 2rem;
-          backdrop-filter: blur(10px);
-        }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-          margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-          display: block;
-          color: #f8fafc;
-          font-weight: 600;
-          margin-bottom: 0.5rem;
-          font-size: 0.875rem;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-        }
-
-        .input-wrapper input,
-        .select-wrapper select,
-        .textarea-wrapper textarea {
-          width: 100%;
-          background: rgba(30, 41, 59, 0.5);
-          border: 1px solid rgba(51, 65, 85, 0.5);
-          border-radius: 12px;
-          padding: 1rem;
-          color: #f8fafc;
-          font-size: 1rem;
-          transition: all 0.3s ease;
-        }
-
-        .input-wrapper input:focus,
-        .select-wrapper select:focus,
-        .textarea-wrapper textarea:focus {
-          outline: none;
-          border-color: #10b981;
-          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
-
-        .input-wrapper input::placeholder,
-        .textarea-wrapper textarea::placeholder {
-          color: #94a3b8;
-        }
-
-        .submit-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: linear-gradient(135deg, #10b981, #059669);
-          color: white;
-          border: none;
-          border-radius: 15px;
-          padding: 0.5rem 1.5rem;
-          font-size: 0.9rem;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          width: 100%;
-          justify-content: center;
-        }
-
-        .submit-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 8px 15px rgba(16, 185, 129, 0.4);
-        }
-
-        .submit-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        .btn-arrow {
-          font-size: 0.9rem;
-          transition: transform 0.3s ease;
-        }
-
-        .submit-btn:hover .btn-arrow {
-          transform: translateX(4px);
-        }
-
-        .status-message {
-          margin-top: 1rem;
-          text-align: center;
-          font-size: 0.875rem;
-        }
-
-        .status-message.success {
-          color: #10b981;
-        }
-
-        .status-message.error {
-          color: #ef4444;
-        }
-
-        /* Collaboration Section */
-        .collaboration-section {
-          margin-bottom: 4rem;
-        }
-
-        .collaboration-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
-        }
-
-        .collaboration-card {
-          background: rgba(15, 23, 42, 0.8);
-          border: 1px solid rgba(51, 65, 85, 0.3);
-          border-radius: 20px;
-          padding: 2rem;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-          min-height: 300px;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .collaboration-card:hover {
-          transform: translateY(-8px);
-          border-color: #10b981;
-          box-shadow: 0 25px 50px rgba(16, 185, 129, 0.3);
-        }
-
-        .collab-header {
-          display: flex;
-          align-items: center;
-          gap: 1rem;
-          margin-bottom: 1rem;
-        }
-
-        .collab-icon {
-          font-size: 2rem;
-          filter: grayscale(100%);
-          transition: filter 0.3s ease;
-        }
-
-        .collaboration-card:hover .collab-icon {
-          filter: grayscale(0%);
-        }
-
-        .collab-header h3 {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #f8fafc;
-        }
-
-        .collab-description {
-          color: #cbd5e1;
-          margin-bottom: 1.5rem;
-          line-height: 1.6;
-          flex: 1;
-        }
-
-        .collab-tags {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 0.5rem;
-        }
-
-        .collab-tag {
-          background: rgba(16, 185, 129, 0.1);
-          color: #6ee7b7;
-          padding: 0.25rem 0.75rem;
-          border-radius: 15px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          border: 1px solid rgba(16, 185, 129, 0.2);
-          transition: all 0.3s ease;
-        }
-
-        .collab-tag:hover {
-          background: rgba(16, 185, 129, 0.2);
-          transform: translateY(-2px);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-          .hero-title {
-            font-size: 3rem;
-          }
-
-          .availability-details {
-            flex-direction: column;
-            text-align: center;
-            gap: 0.5rem;
-          }
-
-          .section-header h2 {
-            font-size: 2.25rem;
-          }
-
-          .contact-methods-grid {
-            grid-template-columns: 1fr;
-          }
-
-          .contact-method-card {
-            flex-direction: column;
-            text-align: center;
-            padding: 1.5rem;
-            min-height: auto;
-          }
-
-          .method-arrow {
-            display: none;
-          }
-
-          .form-row {
-            grid-template-columns: 1fr;
-          }
-
-          .contact-form {
-            padding: 1.5rem;
-          }
-
-          .form-header h2 {
-            font-size: 2rem;
-          }
-
-          .collaboration-grid {
-            grid-template-columns: 1fr;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .hero-title {
-            font-size: 2.5rem;
-          }
-
-          .contact-container {
-            padding: 2rem 1rem;
-          }
-
-          .availability-card {
-            padding: 1.5rem;
-          }
-
-          .contact-form {
-            padding: 1rem;
-          }
-
-          .form-header h2 {
-            font-size: 1.75rem;
-          }
-
-          .contact-method-card,
-          .collaboration-card {
-            padding: 1rem;
-          }
-        }
-      `}</style>
     </>
   );
 }
+
+const s = {
+  hero: {
+    position: "relative",
+    minHeight: "42vh",
+    marginTop: "80px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    overflow: "hidden",
+    textAlign: "center",
+  },
+  orb1: {
+    position: "absolute",
+    top: 0, left: "10%",
+    width: "400px", height: "300px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(96,165,250,0.1) 0%, transparent 70%)",
+    filter: "blur(40px)", pointerEvents: "none",
+  },
+  orb2: {
+    position: "absolute",
+    bottom: 0, right: "10%",
+    width: "350px", height: "300px",
+    borderRadius: "50%",
+    background: "radial-gradient(circle, rgba(167,139,250,0.1) 0%, transparent 70%)",
+    filter: "blur(40px)", pointerEvents: "none",
+  },
+  heroInner: {
+    position: "relative", zIndex: 2,
+    maxWidth: "660px", padding: "4rem 2rem",
+    display: "flex", flexDirection: "column",
+    gap: "1rem", alignItems: "center",
+  },
+  heroLabel: {
+    fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.15em",
+    color: "var(--blue)", textTransform: "uppercase",
+  },
+  heroTitle: {
+    fontSize: "clamp(2.2rem, 4.5vw, 3.5rem)", fontWeight: 800,
+    letterSpacing: "-0.03em", color: "var(--text)", lineHeight: 1.1,
+  },
+  heroSub: {
+    fontSize: "1.05rem", color: "var(--text-2)", lineHeight: 1.7, maxWidth: "520px",
+  },
+  availBadge: {
+    display: "flex", alignItems: "center", gap: "0.5rem",
+    background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)",
+    borderRadius: "20px", padding: "0.5rem 1.25rem",
+  },
+  availDot: {
+    width: "8px", height: "8px", borderRadius: "50%",
+    background: "var(--green)", animation: "pulse-dot 2s infinite", display: "inline-block",
+  },
+
+  container: { maxWidth: "1000px", margin: "0 auto", padding: "0 2rem" },
+  section: { padding: "3.5rem 0" },
+  sectionHeader: { marginBottom: "2rem" },
+  label: {
+    display: "block",
+    fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.14em",
+    color: "var(--blue)", textTransform: "uppercase", marginBottom: "0.5rem",
+  },
+
+  linksGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    gap: "1rem",
+  },
+  linkCard: {
+    display: "flex", alignItems: "center", gap: "1.25rem",
+    padding: "1.5rem", textDecoration: "none", color: "inherit",
+    transition: "transform 0.25s, border-color 0.25s",
+  },
+  linkIcon: { flexShrink: 0 },
+  linkTitle: { fontSize: "1rem", fontWeight: 700, color: "var(--text)", marginBottom: "0.2rem" },
+  linkValue: { fontSize: "0.85rem", color: "var(--text-2)" },
+  linkArrow: { marginLeft: "auto", flexShrink: 0 },
+
+  formWrap: { maxWidth: "700px", margin: "0 auto" },
+  formHeader: { marginBottom: "2rem" },
+  formTitle: {
+    fontSize: "clamp(1.5rem, 2.5vw, 2rem)", fontWeight: 800,
+    color: "var(--text)", letterSpacing: "-0.02em", marginBottom: "0.5rem",
+  },
+  form: { padding: "2rem", display: "flex", flexDirection: "column", gap: "1.25rem" },
+  formRow: {
+    display: "grid", gridTemplateColumns: "1fr 1fr",
+    gap: "1.25rem",
+  },
+  formGroup: { display: "flex", flexDirection: "column", gap: "0.5rem" },
+  formLabel: {
+    fontSize: "0.78rem", fontWeight: 600, letterSpacing: "0.08em",
+    textTransform: "uppercase", color: "var(--text-2)",
+  },
+  input: {
+    background: "rgba(255,255,255,0.03)",
+    border: "1px solid var(--border)",
+    borderRadius: "10px", padding: "0.75rem 1rem",
+    color: "var(--text)", fontSize: "0.95rem",
+    outline: "none", width: "100%",
+    transition: "border-color 0.2s, box-shadow 0.2s",
+    fontFamily: "inherit",
+  },
+  submitBtn: {
+    display: "inline-flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
+    padding: "0.85rem 2rem",
+    background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+    color: "#fff", border: "none", borderRadius: "10px",
+    fontWeight: 600, fontSize: "1rem", cursor: "pointer",
+    boxShadow: "0 4px 20px rgba(96,165,250,0.3)",
+    transition: "opacity 0.2s, transform 0.2s",
+  },
+  statusMsg: {
+    textAlign: "center", fontSize: "0.9rem",
+    padding: "0.75rem", borderRadius: "8px",
+    background: "rgba(255,255,255,0.03)",
+  },
+
+  oppGrid: {
+    display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "1.25rem",
+  },
+  oppCard: {
+    padding: "1.75rem", display: "flex", flexDirection: "column", gap: "0.75rem",
+  },
+  oppTitle: { fontSize: "1.05rem", fontWeight: 700, color: "var(--text)" },
+  oppDesc: { fontSize: "0.9rem", color: "var(--text-2)", lineHeight: 1.6 },
+};

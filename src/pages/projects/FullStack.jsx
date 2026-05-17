@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ImageLightbox from "../../components/ImageLightbox";
 import moviePickerImage from "../../images/movie-picker.png";
-import windashImage from "../../images/Windash.png";
+import windashImage from "../../images/windash.png";
 
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 24 },
